@@ -6,6 +6,7 @@ public class AudioReference extends Reference {
     public enum AudioQuality {
         LOW, MEDIUM, HIGH, VERY_HIGH;
     }
+
     private AudioQuality audioQuality;
 
     public AudioReference(AudioQuality quality){
@@ -30,30 +31,45 @@ public class AudioReference extends Reference {
         this.audioQuality = audioQuality;
     }
 
-     public void editAudio(AudioQuality audioQuality, boolean isDownloadable, String title, String description, String link, String accessRights, String license, String language, int rating,  int viewCount, int shareCount){
-        editBasic(title, description, link);
-        this.setAccessRights(accessRights);
-        this.setLicense(license);
+    // Método original dividido em dois:
+    public void editAudio(AudioQuality audioQuality, boolean isDownloadable){
         this.setAudioQuality(audioQuality);
-        editVideoAttributes(rating, language, viewCount, shareCount, isDownloadable);
-     }
+        this.setDownloadable(isDownloadable);
+        editAudio();
+    }
 
-     public void editAudioAdapter(List<String> properties, List<Integer> intProperties, AudioQuality audioQuality, boolean isDownloadable){
-         this.editAudio(audioQuality, isDownloadable, properties.get(0), properties.get(1), properties.get(2), properties.get(3), properties.get(4), properties.get(5), intProperties.get(0),  intProperties.get(1), intProperties.get(2));
-     }
+    // Novo método que recupera os parâmetros diretamente do objeto
+    private void editAudio() {
+        editBasic(this.getTitle(), this.getDescription(), this.getLink());
+        this.setAccessRights(this.getAccessRights());
+        this.setLicense(this.getLicense());
+        editVideoAttributes(this.getRating(), this.getLanguage(), this.getViewCount(), this.getShareCount());
+    }
 
-     private void editVideoAttributes(int rating, String language, int viewCount, int shareCount,boolean isDownloadable){
-         this.setRating(rating);
-         this.setShareCount(shareCount);
-         this.setViewCount(viewCount);
-         this.setDownloadable(isDownloadable);
-         this.setLanguage(language);
-     }
+    // Adapta os parâmetros reduzidos para preencher o objeto antes da edição
+    public void editAudioAdapter(List<String> properties, List<Integer> intProperties, AudioQuality audioQuality, boolean isDownloadable){
+        this.setTitle(properties.get(0));
+        this.setDescription(properties.get(1));
+        this.setLink(properties.get(2));
+        this.setAccessRights(properties.get(3));
+        this.setLicense(properties.get(4));
+        this.setLanguage(properties.get(5));
+        this.setRating(intProperties.get(0));
+        this.setViewCount(intProperties.get(1));
+        this.setShareCount(intProperties.get(2));
+        editAudio(audioQuality, isDownloadable);
+    }
 
-     public void editBasic(String title, String description, String link){
-         this.setTitle(title);
-         this.setDescription(description);
-         this.setLink(link);
-     }
+    private void editVideoAttributes(int rating, String language, int viewCount, int shareCount){
+        this.setRating(rating);
+        this.setShareCount(shareCount);
+        this.setViewCount(viewCount);
+        this.setLanguage(language);
+    }
 
+    public void editBasic(String title, String description, String link){
+        this.setTitle(title);
+        this.setDescription(description);
+        this.setLink(link);
+    }
 }
