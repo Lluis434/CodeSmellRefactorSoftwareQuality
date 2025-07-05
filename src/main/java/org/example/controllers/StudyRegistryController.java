@@ -111,12 +111,25 @@ public class StudyRegistryController {
         handleMethodHeader("(Study Plan Edit)");
         System.out.println("Type the following info: String firstStep, String resetStudyMechanism, String consistentStep, " +
                 "String seasonalSteps, String basicSteps, String mainObjectiveTitle, String mainGoalTitle, String mainMaterialTopic, " +
-                "String mainTask, @NotNull  Integer numberOfSteps, boolean isImportant. " +
+                "String mainTask, @NotNull Integer numberOfSteps, boolean isImportant. " +
                 "The Date to start is today, the date to end is x days from now, type the quantity of days\n");
-        LocalDateTime createdAT = LocalDateTime.now();
-        studyPlan.assignSteps(getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(), getInput(),
-                Integer.parseInt(getInput()), Boolean.parseBoolean(getInput()), createdAT, createdAT.plusDays(Long.parseLong(getInput())));
+
+        // Coletar as 9 strings para formar a lista
+        List<String> stepProperties = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            stepProperties.add(getInput());
+        }
+
+        // Coletar os dados restantes
+        Integer numberOfSteps = Integer.parseInt(getInput());
+        boolean isImportant = Boolean.parseBoolean(getInput());
+        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime endsAt = createdAt.plusDays(Long.parseLong(getInput()));
+
+        // Chamar o novo método refatorado
+        studyPlan.handleAssignSteps(stepProperties, numberOfSteps, isImportant, createdAt, endsAt);
     }
+
 
     private StudyGoal getStudyGoalInfo(){
         handleMethodHeader("(Study Goal Creation)");
