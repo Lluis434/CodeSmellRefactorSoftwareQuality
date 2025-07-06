@@ -30,10 +30,22 @@ public class StudyCardsController {
         actions.put("2", this::handleCreateCard);
         actions.put("3", this::handleRemoveCard);
         actions.put("4", this::handleRandomFlashCard);
-        actions.put("5", this::handleInsertCardInBox);
-        actions.put("6", this::handleRemoveCardFromBox);
-        actions.put("7", this::handleUpgradeCardFromBox);
-        actions.put("8", this::handleDowngradeCardFromBox);
+        actions.put("5", () -> leitnerSystem.promptAndInsertCard());
+        actions.put("6", () -> leitnerSystem.promptAndRemoveCard());
+        actions.put("7", () -> {
+            try {
+                leitnerSystem.promptAndUpgradeCard();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
+        actions.put("8", () -> {
+            try {
+                leitnerSystem.promptAndDowngradeCard();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
         actions.put("9", this::handleViewBoxes);
         actions.put("10", this::handleGetRandomCardFromBox);
     }
@@ -44,7 +56,8 @@ public class StudyCardsController {
         StringBuilder response = new StringBuilder();
         for(Integer key : keys){
             Card card = cards.get(key);
-            response.append("[id: ").append(key).append("] Question: ").append(card.getQuestion()).append(", Answer: ").append(card.getAnswer()).append("\n");
+            response.append("[id: ").append(key).append("] Question: ").append(card.getQuestion())
+                    .append(", Answer: ").append(card.getAnswer()).append("\n");
         }
         System.out.println(response.toString().isEmpty() ? "No cards" : response.toString());
     }
@@ -69,65 +82,22 @@ public class StudyCardsController {
         System.out.println(manager.formatCard(id));
     }
 
-    public void handleInsertCardInBox(){
-        System.out.println("Type card id:");
-        int id = Integer.parseInt(getInput());
-        System.out.println("Type box(0-4):");
-        int box = Integer.parseInt(getInput());
-        leitnerSystem.addCardToBox(id, box);
-    }
-
-    public void handleRemoveCardFromBox(){
-        System.out.println("Type card id:");
-        int id = Integer.parseInt(getInput());
-        System.out.println("Type box(0-4):");
-        int box = Integer.parseInt(getInput());
-        leitnerSystem.removeCardFromBox(id, box);
-    }
-
     public void handleViewBoxes(){
         System.out.println(leitnerSystem.toString());
     }
 
-    public void handleUpgradeCardFromBox() {
-        try{
-            System.out.println("Type card id:");
-            int id = Integer.parseInt(getInput());
-            System.out.println("Type box(0-4):");
-            int box = Integer.parseInt(getInput());
-            leitnerSystem.upgradeCard(id, box);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void handleDowngradeCardFromBox() {
-        try{
-            System.out.println("Type card id:");
-            int id = Integer.parseInt(getInput());
-            System.out.println("Type box(0-4):");
-            int box = Integer.parseInt(getInput());
-            leitnerSystem.downgradeCard(id, box);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-
+    // Novo método que retorna a string do cartão aleatório de caixa
     public String getRandomCardFromBox() {
-        String response = "";
-        response += leitnerSystem.getMethodName();
-        List<Box> boxes = leitnerSystem.getBoxes();
-        response += leitnerSystem.getRandomCard(boxes);
-        return response;
+        try {
+            return leitnerSystem.getFormattedRandomCardFromBoxes();
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
+    // Método que exibe no console o cartão aleatório de caixa
     public void handleGetRandomCardFromBox() {
-        try{
-            String response = getRandomCardFromBox();
-            System.out.println(response);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        System.out.println(getRandomCardFromBox());
     }
 
     public void handleCardsInput(){
