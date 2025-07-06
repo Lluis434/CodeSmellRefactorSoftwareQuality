@@ -1,32 +1,32 @@
 package org.example.studymaterial;
 
-public class TextReference extends Reference{
+public class TextReference extends Reference {
     private int wordCount;
     private String format;
 
     public TextReference(String title, String language, int wordCount, String format, String accessRights) {
         this.wordCount = wordCount;
         this.format = format;
-        this.setTitle(title);
-        this.setLanguage(language);
-        this.setAccessRights(accessRights);
+        updateMetadata(title, null, null);
+        setLanguage(language);
+        updateAccessInfo(accessRights, null, false);
     }
 
     public void editAccess(String accessRights, String format, int wordCount) {
-        this.setAccessRights(accessRights);
+        updateAccessInfo(accessRights, null, isDownloadable());
         this.format = format;
         this.wordCount = wordCount;
     }
 
-    public boolean handleTextAccess(){
-        if(getAccessRights() != "Public"){
+    public boolean handleTextAccess() {
+        if (!"Public".equals(getAccessRights())) {
             return false;
-        } else if (this.format != "pdf"){
+        } else if (!"pdf".equalsIgnoreCase(this.format)) {
             return false;
-        } else if (this.wordCount == 0){
+        } else if (this.wordCount == 0) {
             return false;
         }
         return true;
     }
-
 }
+

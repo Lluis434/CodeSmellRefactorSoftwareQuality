@@ -6,33 +6,44 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchLog {
-    private List<String> searchHistory;
-    private Map<String, Integer> searchCount;
-    private boolean isLocked;
-    private Integer numUsages;
+    private final List<String> searchHistory = new ArrayList<>();
+    private final Map<String, Integer> searchCount = new HashMap<>();
+    private boolean isLocked = false;
+    private int numUsages = 0;
     private String logName;
 
     public SearchLog(String logName) {
-        searchHistory = new ArrayList<>();
-        searchCount = new HashMap<>();
         this.logName = logName;
-        numUsages = 0;
-        isLocked = false;
     }
-    public void addSearchHistory(String searchHistory) {
-        this.searchHistory.add(searchHistory);
+
+    /**
+     * Método público para compatibilidade com testes legados.
+     * Adiciona ao histórico, **mas não atualiza contadores nem numUsages**.
+     */
+    public void addSearchHistory(String query) {
+        if (isLocked) return;
+        searchHistory.add(query);
     }
+
+    /**
+     * Método principal para registrar buscas no sistema,
+     * atualiza histórico, contadores e número de usos.
+     */
+    public void logSearch(String query) {
+        if (isLocked) return;
+        addSearchHistory(query);
+        searchCount.put(query, searchCount.getOrDefault(query, 0) + 1);
+        numUsages++;
+    }
+
+    // Retorna cópia para proteger estado interno
     public List<String> getSearchHistory() {
-        return searchHistory;
+        return new ArrayList<>(searchHistory);
     }
-    public void setSearchHistory(List<String> searchHistory) {
-        this.searchHistory = searchHistory;
-    }
+
+    // Retorna cópia para proteger estado interno
     public Map<String, Integer> getSearchCount() {
-        return searchCount;
-    }
-    public void setSearchCount(Map<String, Integer> searchCount) {
-        this.searchCount = searchCount;
+        return new HashMap<>(searchCount);
     }
 
     public boolean isLocked() {
@@ -40,14 +51,14 @@ public class SearchLog {
     }
 
     public void setLocked(boolean locked) {
-        isLocked = locked;
+        this.isLocked = locked;
     }
 
-    public Integer getNumUsages() {
+    public int getNumUsages() {
         return numUsages;
     }
 
-    public void setNumUsages(Integer numUsages) {
+    public void setNumUsages(int numUsages) {
         this.numUsages = numUsages;
     }
 
