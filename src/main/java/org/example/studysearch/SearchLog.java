@@ -19,18 +19,23 @@ public class SearchLog {
         numUsages = 0;
         isLocked = false;
     }
-    public void addSearchHistory(String searchHistory) {
-        this.searchHistory.add(searchHistory);
+
+    public void addSearchHistory(String searchTerm) {
+        this.searchHistory.add(searchTerm);
     }
+
     public List<String> getSearchHistory() {
         return searchHistory;
     }
+
     public void setSearchHistory(List<String> searchHistory) {
         this.searchHistory = searchHistory;
     }
+
     public Map<String, Integer> getSearchCount() {
         return searchCount;
     }
+
     public void setSearchCount(Map<String, Integer> searchCount) {
         this.searchCount = searchCount;
     }
@@ -57,5 +62,19 @@ public class SearchLog {
 
     public void setLogName(String logName) {
         this.logName = logName;
+    }
+
+    // Método que encapsula a lógica do registro da busca
+    public void logSearch(String searchTerm) {
+        if (!isLocked) {
+            addSearchHistory(searchTerm);
+            this.numUsages = this.numUsages + 1;
+            this.searchCount.put(searchTerm, this.searchCount.getOrDefault(searchTerm, 0) + 1);
+        }
+    }
+
+    // Método que encapsula a forma como o log é apresentado
+    public String getLogInfo() {
+        return "Logged in: " + this.logName;
     }
 }

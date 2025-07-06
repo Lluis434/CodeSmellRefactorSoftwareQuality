@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LeitnerSystem extends StudyMethod{
+import static org.example.controllers.MainController.getInput;
+
+public class LeitnerSystem extends StudyMethod {
     List<Box> boxes = null;
+
     public LeitnerSystem(String methodName) {
         super(methodName);
         boxes = new ArrayList<>(Arrays.asList(new Box(), new Box(), new Box(), new Box(), new Box()));
@@ -42,11 +45,8 @@ public class LeitnerSystem extends StudyMethod{
     }
 
     public String getRandomCard(List<Box> otherBoxes){
-        if(otherBoxes == null){
-            return null;
-        }
-        if(otherBoxes.isEmpty()){
-            return null;
+        if(otherBoxes == null || otherBoxes.isEmpty()){
+            return "No cards available";
         }
         Box allBoxes = new Box();
         for(Box box : otherBoxes){
@@ -78,7 +78,7 @@ public class LeitnerSystem extends StudyMethod{
     }
 
     public void boxIdValidation(Integer boxId) throws Exception {
-        if(boxId == null || boxId > (boxes.size()-1) || boxId <= 0){
+        if(boxId == null || boxId > (boxes.size()-1) || boxId < 0){
             throw new Exception("Invalid box ID");
         }
     }
@@ -87,7 +87,7 @@ public class LeitnerSystem extends StudyMethod{
         boxIdValidation(boxId);
 
         Box refBox = boxes.get(boxId);
-        if(refBox.hasCard(cardId)){
+        if(!refBox.hasCard(cardId)){
             throw new Exception("No card Found");
         }
         refBox.removeCard(cardId);
@@ -98,11 +98,49 @@ public class LeitnerSystem extends StudyMethod{
         boxIdValidation(boxId);
 
         Box refBox = boxes.get(boxId);
-        if(refBox.hasCard(cardId)){
+        if(!refBox.hasCard(cardId)){
             throw new Exception("No card Found");
         }
         refBox.removeCard(cardId);
         boxes.get(Math.max(boxId - 1, 0)).addCard(cardId);
     }
 
+
+    // ===== Métodos refatorados que lidam com input foram movidos para cá =====
+
+    public void promptAndInsertCard() {
+        System.out.println("Type card id:");
+        int id = Integer.parseInt(getInput());
+        System.out.println("Type box(0-4):");
+        int box = Integer.parseInt(getInput());
+        addCardToBox(id, box);
+    }
+
+    public void promptAndRemoveCard() {
+        System.out.println("Type card id:");
+        int id = Integer.parseInt(getInput());
+        System.out.println("Type box(0-4):");
+        int box = Integer.parseInt(getInput());
+        removeCardFromBox(id, box);
+    }
+
+    public void promptAndUpgradeCard() throws Exception {
+        System.out.println("Type card id:");
+        int id = Integer.parseInt(getInput());
+        System.out.println("Type box(0-4):");
+        int box = Integer.parseInt(getInput());
+        upgradeCard(id, box);
+    }
+
+    public void promptAndDowngradeCard() throws Exception {
+        System.out.println("Type card id:");
+        int id = Integer.parseInt(getInput());
+        System.out.println("Type box(0-4):");
+        int box = Integer.parseInt(getInput());
+        downgradeCard(id, box);
+    }
+
+    public String getFormattedRandomCardFromBoxes() {
+        return getMethodName() + ": " + getRandomCard(getBoxes());
+    }
 }
